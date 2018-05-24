@@ -6,6 +6,20 @@ public func routes(_ router: Router) throws {
     router.get("hello") { req in
         return "Hello, world!"
     }
+    
+//    router.get("patients") { req in
+//        return req.withConnection(to: .sqlite) { db -> Future<Patient> in
+//            return try db.query(Patient.self).filter(Patient.providerID == "Testing").all()
+//        }
+//    }
+
+
+    let patientController = PatientController()
+    router.post("patient", use: patientController.create)
+    router.get("patients", use: patientController.index)
+    
+
+//    router.get("patients", use: patientController.index)
 
     // Example of configuring a controller
     let todoController = TodoController()
