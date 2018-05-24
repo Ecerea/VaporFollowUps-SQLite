@@ -18,7 +18,7 @@ struct PatientSend: Codable, Content, ResponseEncodable {
 final class PatientController {
     
     func index(_ req: Request) throws -> Future<[PatientSend]> {
-        
+        print("GET")
         let  providerID = req.http.headers["providerID"].first ?? ""
         return try Patient.query(on: req).filter(\.providerID == providerID).all().map({ (patients) -> ([PatientSend]) in
             var patientArray = [PatientSend]()
@@ -37,19 +37,23 @@ final class PatientController {
     
     /// Saves a decoded `Patient` to the database.
     func create(_ request: Request) throws -> HTTPResponse {
+        print("POST")
         let data = request.http.body.data
         var json = [String : Any]()
         do {
             json = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String : Any]
             
         } catch {
+            print(error)
             print("badRequest")
         }
         guard let patientID = json["patientID"] as? String else {
+            print(json)
             return HTTPResponse(status: .badRequest)
         }
         
         guard let byteContent = json["content"] as? ByteData else {
+            print(json)
             return HTTPResponse(status: .badRequest)
         }
         let content = Data(bytes: byteContent)

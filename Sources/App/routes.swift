@@ -7,6 +7,10 @@ public func routes(_ router: Router) throws {
         return "Hello, world!"
     }
     
+    router.get("plaintext") { req in
+        return "Hello Verified"
+    }
+    
 //    router.get("patients") { req in
 //        return req.withConnection(to: .sqlite) { db -> Future<Patient> in
 //            return try db.query(Patient.self).filter(Patient.providerID == "Testing").all()
