@@ -52,33 +52,22 @@ final class PatientController {
             return HTTPResponse(status: .badRequest)
         }
         
-        guard let anyContent = json["content"] else {
+        guard let anyContent = json["content"] as? Array<Int> else {
             print("byteData + \(json)")
             return HTTPResponse(status: .badRequest)
         }
-        print(anyContent)
-        if let intContent = anyContent as? [Int] {
-            print("IntArray")
+    
+        print(anyContent.prefix(10))
+        var testingArray = ByteData()
+        for int in anyContent {
+            let int8 = UInt8(int)
+            testingArray.append(int8)
         }
-        if let int8Content = anyContent as? [Int8] {
-            print("Int8Array")
-        }
-        if let in16Content = anyContent as? [Int16] {
-            print("Int16Array")
-        }
-        if let int32Content = anyContent as? [Int32] {
-            print("Int32Array")
-        }
-        if let int64Content = anyContent as? [Int64] {
-            print("Int64Array")
-        }
-        if let stringContent = anyContent as? [String] {
-            print("StringArray")
-        }
-        if let dataContent = anyContent as? Data {
-            print("Data")
-        }
-        let content = Data()
+        print(testingArray.prefix(10))
+        let content = Data(bytes: testingArray)
+//        let content = Data(buffer: UnsafeBufferPointer(anyContent))
+//        let bytes = [UInt8](content)
+//        print(bytes.prefix(10))
 //        let array = [UInt8](content)
         //print(array.prefix(10))
         //Create New Patient
