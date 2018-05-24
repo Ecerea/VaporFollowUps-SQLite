@@ -52,13 +52,15 @@ final class PatientController {
             return HTTPResponse(status: .badRequest)
         }
         
-        guard let byteContent = json["content"] as? ByteData else {
+        guard let byteContent = json["content"] as? Array<Int8> else {
             print("byteData + \(json)")
             return HTTPResponse(status: .badRequest)
         }
-        let content = Data(bytes: byteContent)
-        let array = [UInt8](content)
-        print(array.prefix(10))
+        
+        print(byteContent.prefix(10))
+        let content = Data()
+//        let array = [UInt8](content)
+//        print(array.prefix(10))
         //Create New Patient
         let newPatient = Patient(id: nil, patientID: patientID, providerID: "Testing", content: content)
         newPatient.save(on: request)
