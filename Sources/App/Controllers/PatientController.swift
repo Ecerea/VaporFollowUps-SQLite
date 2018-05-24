@@ -48,12 +48,12 @@ final class PatientController {
             print("badRequest")
         }
         guard let patientID = json["patientID"] as? String else {
-            print(json)
+            print("patientID + \(json)")
             return HTTPResponse(status: .badRequest)
         }
         
         guard let byteContent = json["content"] as? ByteData else {
-            print(json)
+            print("byteData + \(json)")
             return HTTPResponse(status: .badRequest)
         }
         let content = Data(bytes: byteContent)
