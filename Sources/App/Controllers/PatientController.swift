@@ -22,6 +22,8 @@ final class PatientController {
         let  providerID = req.http.headers["providerID"].first ?? ""
         return try Patient.query(on: req).filter(\.providerID == providerID).all().map({ (patients) -> ([PatientSend]) in
             var patientArray = [PatientSend]()
+            
+            //For some reason, stored data is being returned as a string that I am unable to decode in the app, so need to create separate object to convert content back to ByteData.
             for patient in patients {
                 var patientSend = PatientSend()
                 patientSend.patientID = patient.patientID
@@ -32,7 +34,6 @@ final class PatientController {
             }
             return patientArray
         })
-        //return Patient.query(on: req).filter(\Patient.providerID == providerID).all()
     }
     
     /// Saves a decoded `Patient` to the database.
@@ -52,26 +53,26 @@ final class PatientController {
             return HTTPResponse(status: .badRequest)
         }
         
+        guard let providerID = json["providerID"] as? String else  {
+            print("providerID + \(json)")
+            return HTTPResponse(status: .badRequest)
+        }
+        
         guard let anyContent = json["content"] as? Array<Int> else {
             print("byteData + \(json)")
             return HTTPResponse(status: .badRequest)
         }
-    
-        print(anyContent.prefix(10))
-        var testingArray = ByteData()
+        
+        //Can only decode array into Array<Int> on server. Need to turn this into Data to be stored in sqlite data type(unable to store arrays). So iterate through array and convert to UInt8 and then recompose array.
+        var conversionArray = ByteData()
         for int in anyContent {
             let int8 = UInt8(int)
-            testingArray.append(int8)
+            conversionArray.append(int8)
         }
-        print(testingArray.prefix(10))
-        let content = Data(bytes: testingArray)
-//        let content = Data(buffer: UnsafeBufferPointer(anyContent))
-//        let bytes = [UInt8](content)
-//        print(bytes.prefix(10))
-//        let array = [UInt8](content)
-        //print(array.prefix(10))
+        let content = Data(bytes: conversionArray)
+
         //Create New Patient
-        let newPatient = Patient(id: nil, patientID: patientID, providerID: "Testing", content: content)
+        let newPatient = Patient(id: nil, patientID: patientID, providerID: providerID, content: content)
         newPatient.save(on: request)
         print("Successfully saved patient")
         return HTTPResponse(status: .accepted)
