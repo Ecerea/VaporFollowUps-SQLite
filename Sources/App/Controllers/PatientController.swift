@@ -28,8 +28,7 @@ final class PatientController {
                 var patientSend = PatientSend()
                 patientSend.patientID = patient.patientID
                 patientSend.providerID = patient.providerID
-                let content = [UInt8](patient.content)
-                patientSend.content = content
+                patientSend.content = [UInt8](patient.content)
                 patientArray.append(patientSend)
             }
             return patientArray
